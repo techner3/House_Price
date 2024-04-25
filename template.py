@@ -16,7 +16,7 @@ list_of_files=[f"{project_name}/__init__.py",
                f"{project_name}/utils/__init__.py",
                f"{project_name}/entity/artifact_entity.py",
                f"{project_name}/entity/config_entity.py",
-               f"requirements.py",
+               f"requirements.txt",
                f"setup.py",
                f"app.py"]
 

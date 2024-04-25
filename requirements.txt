@@ -1,0 +1,5 @@
+pandas
+numpy 
+from-root
+matplotlib
+seaborn
