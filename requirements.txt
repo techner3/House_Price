@@ -1,5 +1,9 @@
-pandas
+dvc
 numpy 
+pandas
+seaborn
+pymongo
 from-root
 matplotlib
-seaborn
+python-dotenv
+-e .

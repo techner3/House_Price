@@ -1,0 +1,10 @@
+stages:
+  data_ingestion:
+    cmd: python house_price/components/data_ingestion.py
+    deps:
+      - house_price/components/data_ingestion.py
+      - house_price/data_access/mongo_db.py
+    outs:
+      - artifacts/data_ingestion/feature_store
+      - artifacts/data_ingestion/train
+      - artifacts/data_ingestion/test

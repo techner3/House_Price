@@ -1,0 +1,29 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python house_price/components/data_ingestion.py
+    deps:
+    - path: house_price/components/data_ingestion.py
+      hash: md5
+      md5: 8643ee64b210cbe985fa5d3ead0bd254
+      size: 2380
+    - path: house_price/data_access/mongo_db.py
+      hash: md5
+      md5: b02fa75043b1bd0a753d6f94a1e3064e
+      size: 1558
+    outs:
+    - path: artifacts/data_ingestion/feature_store
+      hash: md5
+      md5: d2f9b153737ebb965b62f568f01426c9.dir
+      size: 445158
+      nfiles: 1
+    - path: artifacts/data_ingestion/test
+      hash: md5
+      md5: 220b4ae380e20bb6cac4fae8bc23bfde.dir
+      size: 89701
+      nfiles: 1
+    - path: artifacts/data_ingestion/train
+      hash: md5
+      md5: 4c4a74de816468d1c27156670190bdf6.dir
+      size: 356309
+      nfiles: 1
