@@ -153,6 +153,6 @@ dmypy.json
 cython_debug/
 
 logs/
-test.py
+test.*
 
 artifacts/*

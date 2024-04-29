@@ -5,25 +5,34 @@ stages:
     deps:
     - path: house_price/components/data_ingestion.py
       hash: md5
-      md5: 8643ee64b210cbe985fa5d3ead0bd254
-      size: 2380
+      md5: ee1cbdeef9edb60854d8fd09520b3e88
+      size: 1611
     - path: house_price/data_access/mongo_db.py
       hash: md5
       md5: b02fa75043b1bd0a753d6f94a1e3064e
       size: 1558
     outs:
-    - path: artifacts/data_ingestion/feature_store
+    - path: artifacts/data_ingestion/feature_store/data.csv
       hash: md5
-      md5: d2f9b153737ebb965b62f568f01426c9.dir
+      md5: 43769c42fe655b2416effa7cc8e8ba5b
       size: 445158
-      nfiles: 1
-    - path: artifacts/data_ingestion/test
+  data_transformation:
+    cmd: python house_price/components/data_transformation.py
+    deps:
+    - path: artifacts/data_ingestion/feature_store/data.csv
       hash: md5
-      md5: 220b4ae380e20bb6cac4fae8bc23bfde.dir
-      size: 89701
-      nfiles: 1
-    - path: artifacts/data_ingestion/train
+      md5: 43769c42fe655b2416effa7cc8e8ba5b
+      size: 445158
+    - path: house_price/components/data_transformation.py
       hash: md5
-      md5: 4c4a74de816468d1c27156670190bdf6.dir
-      size: 356309
-      nfiles: 1
+      md5: ecc82ed83c42cc8db9a409dd50c52bbb
+      size: 4691
+    outs:
+    - path: artifacts/data_transformation/test/test.npy
+      hash: md5
+      md5: 0a2b80fa4d5d63b8447e52841495dd26
+      size: 264096
+    - path: artifacts/data_transformation/train/train.npy
+      hash: md5
+      md5: 02a8e4b2cab48efb5d3fea30be827141
+      size: 1056000

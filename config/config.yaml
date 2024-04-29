@@ -1,0 +1,116 @@
+target:
+  - SalePrice
+
+year_features:
+  - YearBuilt
+  - YearRemodAdd
+  - GarageYrBlt
+  - YrSold
+  - MoSold
+
+numerical_features:
+  - LotFrontage
+  - LotArea
+  - MasVnrArea
+  - BsmtFinSF1
+  - BsmtFinSF2
+  - BsmtUnfSF
+  - TotalBsmtSF
+  - 1stFlrSF
+  - 2ndFlrSF
+  - LowQualFinSF
+  - GrLivArea
+  - BsmtFullBath
+  - BsmtHalfBath
+  - FullBath
+  - HalfBath
+  - TotRmsAbvGrd
+  - Fireplaces
+  - GarageCars
+  - GarageArea
+  - WoodDeckSF
+  - OpenPorchSF
+  - EnclosedPorch
+  - 3SsnPorch
+  - ScreenPorch
+  - PoolArea
+  - MiscVal
+  - MSSubClass
+
+categorical_features:
+  - MSZoning
+  - Street
+  - Alley
+  - LotShape
+  - LandContour
+  - Utilities
+  - LotConfig
+  - LandSlope
+  - Neighborhood
+  - Condition1
+  - Condition2
+  - BldgType
+  - HouseStyle
+  - OverallQual
+  - OverallCond
+  - RoofStyle
+  - Exterior1st
+  - Exterior2nd
+  - MasVnrType
+  - ExterQual
+  - ExterCond
+  - Foundation
+  - BsmtQual
+  - BsmtCond
+  - BsmtExposure
+  - BsmtFinType1
+  - BsmtFinType2
+  - Heating
+  - HeatingQC
+  - CentralAir
+  - Electrical
+  - KitchenQual
+  - Functional
+  - FireplaceQu
+  - GarageType
+  - GarageFinish
+  - GarageQual
+  - GarageCond
+  - PavedDrive
+  - PoolQC
+  - Fence
+  - MiscFeature
+  - SaleType
+  - SaleCondition
+  - RoofMatl
+
+multi_collinear_columns:
+  - LotFrontage
+  - BsmtFinSF1
+  - BsmtFinSF2
+  - BsmtUnfSF
+  - TotalBsmtSF
+  - 1stFlrSF
+  - 2ndFlrSF
+  - LowQualFinSF
+  - GrLivArea
+  - FullBath
+  - TotRmsAbvGrd
+  - GarageCars
+  - GarageArea
+
+skewed_columns:
+  - LotArea
+  - MasVnrArea
+  - BsmtHalfBath
+  - WoodDeckSF
+  - OpenPorchSF
+  - EnclosedPorch
+  - 3SsnPorch
+  - ScreenPorch
+  - PoolArea
+  - MiscVal
+  - MSSubClass
+
+new_columns:
+  - HouseAge
