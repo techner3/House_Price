@@ -73,20 +73,33 @@ class DataTransformation:
 
         try:
             df=load_csv(self.data_transformation_config.data_filepath)
+            logging.info(f"Data loaded from feature store")
             X,Y=self.split_data(df,self.schema["target"])
+            logging.info(f"Dependent and Independent variables separated")
             X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=self.data_transformation_config.train_test_split_ratio)
+            logging.info(f"Train Tes Split Done")
             feature_preprocessor_obj=self.get_feature_preprocessor_obj()
+            logging.info(f"Independent features preprocessor loaded")
             target_preprocessor_obj=self.get_target_preprocessor_obj()
+            logging.info(f"Dependent feature preprocessor loaded")
             X_train_transformed=feature_preprocessor_obj.fit_transform(X_train)
+            logging.info(f"Pre-processing of Independent Train features completed")
             X_test_transformed=feature_preprocessor_obj.transform(X_test)
+            logging.info(f"Pre-processing of Independent Test features completed")
             Y_train_transformed=target_preprocessor_obj.fit_transform(Y_train)
+            logging.info(f"Pre-processing of dependent Train feature completed")
             Y_test_transformed=target_preprocessor_obj.transform(Y_test)
+            logging.info(f"Pre-processing of dependent Test feature completed")
             train_arr = np.c_[X_train_transformed, Y_train_transformed]
             test_arr = np.c_[X_test_transformed, Y_test_transformed]
             os.makedirs(self.train_file_path,exist_ok=True)
             os.makedirs(self.test_file_path,exist_ok=True)
-            save_numpy_array_data(train_arr,os.path.join(self.train_file_path,TRAIN_FILE))
-            save_numpy_array_data(test_arr,os.path.join(self.test_file_path,TEST_FILE))
+            train_file=os.path.join(self.train_file_path,TRAIN_FILE)
+            test_file=os.path.join(self.test_file_path,TEST_FILE)
+            save_numpy_array_data(train_arr,train_file)
+            logging.info(f"Train data saved in numpy array format at {train_file}")
+            save_numpy_array_data(test_arr,test_file)
+            logging.info(f"Test data saved in numpy array format at {test_file}")
 
         except Exception as e:
             raise HousePriceException(e,sys)
