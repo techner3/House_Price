@@ -18,8 +18,8 @@ class DataIngestion:
     def export_data_to_feature_store(self,data):
 
         try:
-            os.makedirs(self.data_ingestion_config.feature_store_dir,exist_ok=True)
-            save_csv(data,os.path.join(self.data_ingestion_config.feature_store_dir,DATA_FILE))
+            os.makedirs(os.path.dirname(self.data_ingestion_config.feature_store_dir),exist_ok=True)
+            save_csv(data,self.data_ingestion_config.feature_store_dir)
             logging.info("Data stored in Feature Store")
 
         except Exception as e:
@@ -38,12 +38,12 @@ class DataIngestion:
 if __name__=="__main__":
 
     try:
-        logging.info(">>>>>>>>>> Stage 01 Data Ingestion initiated <<<<<<<<<<")
+        logging.info(">>>>>>>>>> Stage 00 Data Ingestion initiated <<<<<<<<<<")
         houseprice_data=HousePriceData()
         data_ingestion_config=DataIngestionConfig()
         data_ingestion=DataIngestion(data_ingestion_config,houseprice_data)
         data_ingestion.initiate_data_ingestion()
-        logging.info(">>>>>>>>>> Stage 01 Data Ingestion completed <<<<<<<<<<")
+        logging.info(">>>>>>>>>> Stage 00 Data Ingestion completed <<<<<<<<<<")
 
     except Exception as e:
             raise HousePriceException(e,sys)

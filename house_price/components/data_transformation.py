@@ -34,9 +34,7 @@ class DataTransformation:
 
         self.data_transformation_config=data_transformation_config
         self.schema=read_yaml(self.data_transformation_config.config_yaml)
-        self.train_file_path=self.data_transformation_config.train_file_path
-        self.test_file_path=self.data_transformation_config.test_file_path
-        self.numerical_features=[feature for feature in self.schema["numerical_features"] if feature not in self.schema["multi_collinear_columns"]]
+        self.numerical_features=[feature for feature in self.schema["numerical_features"] if feature not in self.schema["multi_collinear_columns"] and feature not in self.schema["skewed_columns"]]
 
     def split_data(self,data,target):
 
@@ -49,13 +47,14 @@ class DataTransformation:
         try:
             year_transformer=Pipeline(steps=[('imputer', KNNImputer()),('featuregenerator', FeatureGenerator()),('year_scaler', StandardScaler())])
             categorical_transformer = Pipeline(steps=[('imputer', SimpleImputer(strategy='constant', fill_value='Missing')),('encoding', OrdinalEncoder(dtype=int,handle_unknown='use_encoded_value',unknown_value=-1))])
+            skewed_transformer=Pipeline(steps=[('imputer', SimpleImputer(strategy='median')),('skew_correction', FunctionTransformer(np.log1p)),('skew_scaler', StandardScaler())])
+            numeric_transformer=Pipeline(steps=[('imputer', SimpleImputer(strategy='median')),('scaler', StandardScaler())])
             preprocessor = ColumnTransformer(transformers=[
             ('year_transformer', year_transformer,self.schema["numerical_features"]),
             ('to_drop', "drop", self.schema["multi_collinear_columns"]),
             ('cat_transformer', categorical_transformer, self.schema["categorical_features"]),
-            ('numeric_imputer', SimpleImputer(strategy='median'), self.numerical_features),
-            ('skew', FunctionTransformer(np.log1p), self.schema["skewed_columns"]),
-            ('scaler',StandardScaler() ,self.numerical_features),
+            ('skew_transformer', skewed_transformer, self.schema["skewed_columns"]),
+            ('num_transformer', numeric_transformer,self.numerical_features),
             ])
             return preprocessor
 
@@ -74,14 +73,18 @@ class DataTransformation:
         try:
             df=load_csv(self.data_transformation_config.data_filepath)
             logging.info(f"Data loaded from feature store")
+
             X,Y=self.split_data(df,self.schema["target"])
             logging.info(f"Dependent and Independent variables separated")
+
             X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=self.data_transformation_config.train_test_split_ratio)
             logging.info(f"Train Tes Split Done")
+
             feature_preprocessor_obj=self.get_feature_preprocessor_obj()
             logging.info(f"Independent features preprocessor loaded")
             target_preprocessor_obj=self.get_target_preprocessor_obj()
             logging.info(f"Dependent feature preprocessor loaded")
+
             X_train_transformed=feature_preprocessor_obj.fit_transform(X_train)
             logging.info(f"Pre-processing of Independent Train features completed")
             X_test_transformed=feature_preprocessor_obj.transform(X_test)
@@ -90,16 +93,16 @@ class DataTransformation:
             logging.info(f"Pre-processing of dependent Train feature completed")
             Y_test_transformed=target_preprocessor_obj.transform(Y_test)
             logging.info(f"Pre-processing of dependent Test feature completed")
+
             train_arr = np.c_[X_train_transformed, Y_train_transformed]
             test_arr = np.c_[X_test_transformed, Y_test_transformed]
-            os.makedirs(self.train_file_path,exist_ok=True)
-            os.makedirs(self.test_file_path,exist_ok=True)
-            train_file=os.path.join(self.train_file_path,TRAIN_FILE)
-            test_file=os.path.join(self.test_file_path,TEST_FILE)
-            save_numpy_array_data(train_arr,train_file)
-            logging.info(f"Train data saved in numpy array format at {train_file}")
-            save_numpy_array_data(test_arr,test_file)
-            logging.info(f"Test data saved in numpy array format at {test_file}")
+            
+            os.makedirs(os.path.dirname(self.data_transformation_config.train_file_path),exist_ok=True)
+            os.makedirs(os.path.dirname(self.data_transformation_config.test_file_path),exist_ok=True)
+            save_numpy_array_data(train_arr,self.data_transformation_config.train_file_path)
+            logging.info(f"Train data saved in numpy array format at {self.data_transformation_config.train_file_path}")
+            save_numpy_array_data(test_arr,self.data_transformation_config.test_file_path)
+            logging.info(f"Test data saved in numpy array format at {self.data_transformation_config.test_file_path}")
 
         except Exception as e:
             raise HousePriceException(e,sys)

@@ -7,4 +7,5 @@ pymongo
 from-root
 matplotlib
 python-dotenv
+xgboost
 -e .

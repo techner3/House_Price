@@ -56,6 +56,8 @@ categorical_features:
   - RoofStyle
   - Exterior1st
   - Exterior2nd
+  - BedroomAbvGr
+  - KitchenAbvGr
   - MasVnrType
   - ExterQual
   - ExterCond

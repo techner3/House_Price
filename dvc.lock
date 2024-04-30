@@ -5,8 +5,8 @@ stages:
     deps:
     - path: house_price/components/data_ingestion.py
       hash: md5
-      md5: ee1cbdeef9edb60854d8fd09520b3e88
-      size: 1611
+      md5: 9fe512ce2733a7aa512d53b30d50e8b1
+      size: 1604
     - path: house_price/data_access/mongo_db.py
       hash: md5
       md5: b02fa75043b1bd0a753d6f94a1e3064e
@@ -14,25 +14,45 @@ stages:
     outs:
     - path: artifacts/data_ingestion/feature_store/data.csv
       hash: md5
-      md5: 43769c42fe655b2416effa7cc8e8ba5b
+      md5: 345f53abb4205c73ad17e3a11ff1e631
       size: 445158
   data_transformation:
     cmd: python house_price/components/data_transformation.py
     deps:
     - path: artifacts/data_ingestion/feature_store/data.csv
       hash: md5
-      md5: 43769c42fe655b2416effa7cc8e8ba5b
+      md5: 345f53abb4205c73ad17e3a11ff1e631
       size: 445158
+    - path: artifacts/data_validation/status.json
+      hash: md5
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
     - path: house_price/components/data_transformation.py
       hash: md5
-      md5: 95d4f8d7f05d0e0f425f55ea4f48a4c3
-      size: 5573
+      md5: ed953ced06c06534e548a53cb20170f2
+      size: 5815
     outs:
     - path: artifacts/data_transformation/test/test.npy
       hash: md5
-      md5: a5c1dae9e84ec8b9b802326ba0daa0d2
-      size: 264096
+      md5: 65fcaf4399e0240ffa3cbfe7e06d636b
+      size: 210368
     - path: artifacts/data_transformation/train/train.npy
       hash: md5
-      md5: 3e58e1c9d6d756b9f77cfb748cc16a8d
-      size: 1056000
+      md5: e588849e49aa9b53111925afa3c50275
+      size: 841088
+  data_validation:
+    cmd: python house_price/components/data_validation.py
+    deps:
+    - path: artifacts/data_ingestion/feature_store/data.csv
+      hash: md5
+      md5: 345f53abb4205c73ad17e3a11ff1e631
+      size: 445158
+    - path: house_price/components/data_validation.py
+      hash: md5
+      md5: bde77de79388881a25a7dcfb1cbb260b
+      size: 2176
+    outs:
+    - path: artifacts/data_validation/status.json
+      hash: md5
+      md5: d41d8cd98f00b204e9800998ecf8427e
+      size: 0
