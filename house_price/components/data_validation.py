@@ -2,8 +2,8 @@ import os
 import sys
 import json
 from logger import logging
-from exception import HousePriceException
 from evidently.report import Report
+from exception import HousePriceException
 from evidently.metric_preset import DataDriftPreset
 from utils import load_csv,read_yaml,save_json,save_yaml
 from entity.config_entity import DataValidationConfig
@@ -73,7 +73,7 @@ class DataValidation:
             drift_status=self.detect_data_drift(train_data,test_data)
             logging.info("Data Drift Check completed")
 
-            validation_status=train_status and test_status and drift_status
+            validation_status=train_status and test_status and not drift_status
             save_json({"status":validation_status},self.data_validation_config.validation_dir)
 
         except Exception as e:

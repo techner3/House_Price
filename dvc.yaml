@@ -13,7 +13,6 @@ stages:
     cmd: python house_price/components/data_validation.py
     deps:
       - house_price/components/data_validation.py
-      - artifacts/data_ingestion/feature_store/data.csv
       - artifacts/data_ingestion/train/train.csv
       - artifacts/data_ingestion/test/test.csv
     outs:
@@ -30,3 +29,15 @@ stages:
     outs:
       - artifacts/data_transformation/train/train.npy
       - artifacts/data_transformation/test/test.npy
+      - artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
+      - artifacts/data_transformation/preprocessor/target_preprocessor.pkl
+    
+  model_trainer:
+    cmd: python house_price/components/model_trainer.py
+    deps:
+      - artifacts/data_transformation/train/train.npy
+      - artifacts/data_transformation/test/test.npy
+      - artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
+      - artifacts/data_transformation/preprocessor/target_preprocessor.pkl
+    outs:
+      - artifacts/model_trainer/model.pkl

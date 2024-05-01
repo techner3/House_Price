@@ -8,7 +8,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer,KNNImputer
 from sklearn.base import BaseEstimator, TransformerMixin
 from entity.config_entity import DataTransformationConfig
-from utils import load_csv,read_yaml,save_numpy_array_data
+from utils import load_csv,read_yaml,save_numpy_array_data,save_object
 from sklearn.preprocessing import StandardScaler,OrdinalEncoder,FunctionTransformer
 
 
@@ -98,6 +98,11 @@ class DataTransformation:
 
             Y_test_transformed=target_preprocessor_obj.transform(Y_test)
             logging.info(f"Pre-processing of dependent Test feature completed")
+
+            save_object(feature_preprocessor_obj,self.data_transformation_config.feature_preprocessor_path)
+            logging.info(f"Feature Preprocessor saved at {self.data_transformation_config.feature_preprocessor_path}")
+            save_object(target_preprocessor_obj,self.data_transformation_config.target_preprocessor_path)
+            logging.info(f"Target Preprocessor saved at {self.data_transformation_config.target_preprocessor_path}")
 
             train_arr = np.c_[X_train_transformed, Y_train_transformed]
             test_arr = np.c_[X_test_transformed, Y_test_transformed]

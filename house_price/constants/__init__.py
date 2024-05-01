@@ -23,3 +23,10 @@ TRAIN_DIR="train"
 TEST_DIR="test"
 TRAIN_NPFILE="train.npy"
 TEST_NPFILE="test.npy"
+PREPROCESSOR_DIR="preprocessor"
+FEATURE_PREPROCESSOR="feature_preprocessor.pkl"
+TARGET_PREPROCESSOR="target_preprocessor.pkl"
+
+#Model Trainer
+MODEL_DIR="model_trainer"
+MODEL_FILE="model.pkl"

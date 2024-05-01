@@ -37,13 +37,21 @@ stages:
       size: 356354
     - path: artifacts/data_validation/status.json
       hash: md5
-      md5: a1cbd35d4488ac8cc6f959d4c633dc37
-      size: 16
+      md5: 145ca6ca911ea23d21143ac4acd84d36
+      size: 17
     - path: house_price/components/data_transformation.py
       hash: md5
-      md5: 055a97778699feead4c9822fb31ac2bd
-      size: 5735
+      md5: 0f54571becabc1915187e025a5f6b2bd
+      size: 6198
     outs:
+    - path: artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
+      hash: md5
+      md5: 979437c6c560dbffa22d7810a5f0bcdd
+      size: 299607
+    - path: artifacts/data_transformation/preprocessor/target_preprocessor.pkl
+      hash: md5
+      md5: 20e031d3181f8d947766fb88613479f5
+      size: 494
     - path: artifacts/data_transformation/test/test.npy
       hash: md5
       md5: ebd0075b1130a501f19967604b64351c
@@ -55,10 +63,6 @@ stages:
   data_validation:
     cmd: python house_price/components/data_validation.py
     deps:
-    - path: artifacts/data_ingestion/feature_store/data.csv
-      hash: md5
-      md5: 345f53abb4205c73ad17e3a11ff1e631
-      size: 445158
     - path: artifacts/data_ingestion/test/test.csv
       hash: md5
       md5: f29edb378b6b6a1619dc26646e00a0ae
@@ -69,14 +73,38 @@ stages:
       size: 356354
     - path: house_price/components/data_validation.py
       hash: md5
-      md5: 09ec8cbfbedcc0d2bbe1d3a6d6201025
-      size: 3685
+      md5: c2d262dbc62e964aaf09644f8b8daefa
+      size: 3689
     outs:
     - path: artifacts/data_validation/drift.yaml
       hash: md5
-      md5: bbaecfc56b4e078903d3ee821db4254c
-      size: 88649
+      md5: c0051017e95dc3ea3473037ad5bd2e70
+      size: 88695
     - path: artifacts/data_validation/status.json
       hash: md5
-      md5: a1cbd35d4488ac8cc6f959d4c633dc37
-      size: 16
+      md5: 145ca6ca911ea23d21143ac4acd84d36
+      size: 17
+  model_trainer:
+    cmd: python house_price/components/model_trainer.py
+    deps:
+    - path: artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
+      hash: md5
+      md5: 979437c6c560dbffa22d7810a5f0bcdd
+      size: 299607
+    - path: artifacts/data_transformation/preprocessor/target_preprocessor.pkl
+      hash: md5
+      md5: 20e031d3181f8d947766fb88613479f5
+      size: 494
+    - path: artifacts/data_transformation/test/test.npy
+      hash: md5
+      md5: ebd0075b1130a501f19967604b64351c
+      size: 210368
+    - path: artifacts/data_transformation/train/train.npy
+      hash: md5
+      md5: 5548b2b881bec7527db7d4249ecc1bab
+      size: 841088
+    outs:
+    - path: artifacts/model_trainer/model.pkl
+      hash: md5
+      md5: 965c4d6d0089a39ef07eb143f527130c
+      size: 301919

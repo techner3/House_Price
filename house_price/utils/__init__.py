@@ -1,5 +1,6 @@
 import os
 import sys
+import dill
 import yaml
 import json
 import numpy as np
@@ -61,11 +62,11 @@ def save_numpy_array_data(array: np.array,file_path):
     except Exception as e:
         raise HousePriceException(e, sys) from e
 
-def load_json(data,file_path):
+def load_json(file_path):
 
     try:
         with open(file_path, 'r') as file:
-            json.load(data,file)
+            return json.load(file)
 
     except Exception as e:
         HousePriceException(e,sys)
@@ -79,3 +80,22 @@ def save_json(data,file_path):
 
     except Exception as e:
         HousePriceException(e,sys)
+
+def load_object(file_path):
+
+    try:
+        with open(file_path, "rb") as file_obj:
+            return dill.load(file_obj)
+
+    except Exception as e:
+        raise HousePriceException(e, sys)
+
+def save_object(obj,file_path):
+
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "wb") as file_obj:
+            dill.dump(obj, file_obj)
+
+    except Exception as e:
+        raise HousePriceException(e, sys)
