@@ -4,10 +4,8 @@ import numpy as np
 from logger import logging
 from sklearn.pipeline import Pipeline
 from exception import HousePriceException
-from constants import TRAIN_FILE,TEST_FILE
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer,KNNImputer
-from sklearn.model_selection import train_test_split
 from sklearn.base import BaseEstimator, TransformerMixin
 from entity.config_entity import DataTransformationConfig
 from utils import load_csv,read_yaml,save_numpy_array_data
@@ -71,14 +69,18 @@ class DataTransformation:
     def initiate_data_transformation(self):
 
         try:
-            df=load_csv(self.data_transformation_config.data_filepath)
-            logging.info(f"Data loaded from feature store")
 
-            X,Y=self.split_data(df,self.schema["target"])
-            logging.info(f"Dependent and Independent variables separated")
+            train_data=load_csv(self.data_transformation_config.train_filepath)
+            logging.info("Train Data extraction for transformation completed")
 
-            X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=self.data_transformation_config.train_test_split_ratio)
-            logging.info(f"Train Tes Split Done")
+            test_data=load_csv(self.data_transformation_config.test_filepath)
+            logging.info("Test Data extraction for transformation completed")
+
+            X_train,Y_train=self.split_data(train_data,self.schema["target"])
+            logging.info(f"Dependent and Independent variables for train data separated")
+
+            X_test,Y_test=self.split_data(test_data,self.schema["target"])
+            logging.info(f"Dependent and Independent variables for test data separated")
 
             feature_preprocessor_obj=self.get_feature_preprocessor_obj()
             logging.info(f"Independent features preprocessor loaded")
@@ -87,22 +89,25 @@ class DataTransformation:
 
             X_train_transformed=feature_preprocessor_obj.fit_transform(X_train)
             logging.info(f"Pre-processing of Independent Train features completed")
+
             X_test_transformed=feature_preprocessor_obj.transform(X_test)
             logging.info(f"Pre-processing of Independent Test features completed")
+
             Y_train_transformed=target_preprocessor_obj.fit_transform(Y_train)
             logging.info(f"Pre-processing of dependent Train feature completed")
+
             Y_test_transformed=target_preprocessor_obj.transform(Y_test)
             logging.info(f"Pre-processing of dependent Test feature completed")
 
             train_arr = np.c_[X_train_transformed, Y_train_transformed]
             test_arr = np.c_[X_test_transformed, Y_test_transformed]
             
-            os.makedirs(os.path.dirname(self.data_transformation_config.train_file_path),exist_ok=True)
-            os.makedirs(os.path.dirname(self.data_transformation_config.test_file_path),exist_ok=True)
             save_numpy_array_data(train_arr,self.data_transformation_config.train_file_path)
             logging.info(f"Train data saved in numpy array format at {self.data_transformation_config.train_file_path}")
+
             save_numpy_array_data(test_arr,self.data_transformation_config.test_file_path)
             logging.info(f"Test data saved in numpy array format at {self.data_transformation_config.test_file_path}")
+            
 
         except Exception as e:
             raise HousePriceException(e,sys)

@@ -1,9 +1,11 @@
 import os 
 import sys
+import json
 from logger import logging
-from constants import STATUS_FILE
 from exception import HousePriceException
-from utils import load_csv,read_yaml,save_json
+from evidently.report import Report
+from evidently.metric_preset import DataDriftPreset
+from utils import load_csv,read_yaml,save_json,save_yaml
 from entity.config_entity import DataValidationConfig
 
 class DataValidation:
@@ -25,10 +27,30 @@ class DataValidation:
             for column in data_columns:
                 if column not in self.columns:
                     status=False
-                    logging.info(f"{column} not present in data extracted from feature store")
-            logging.info("Columns validation completed")
-            os.makedirs(os.path.dirname(self.data_validation_config.validation_dir),exist_ok=True)
-            save_json({"status":status},self.data_validation_config.validation_dir)
+                    logging.info(f"{column} not present in data extracted")
+            return status
+
+        except Exception as e:
+            HousePriceException(e,sys)
+
+    def detect_data_drift(self,train_data,test_data):
+
+        try:
+            data_drift_report = Report(metrics=[DataDriftPreset(),])
+
+            data_drift_report.run(current_data=train_data, reference_data=test_data, column_mapping=None)
+
+            json_report=json.loads(data_drift_report.json())
+
+            save_yaml(json_report,self.data_validation_config.drift_yaml)
+            logging.info(f"Drift report saved at {self.data_validation_config.drift_yaml}")
+
+            n_features = json_report['metrics'][0]["result"]["number_of_columns"]
+            n_drifted_features = json_report['metrics'][0]["result"]["number_of_drifted_columns"]
+
+            logging.info(f"{n_drifted_features}/{n_features} drift detected.")
+            drift_status = json_report['metrics'][0]["result"]["dataset_drift"]
+            return drift_status
 
         except Exception as e:
             HousePriceException(e,sys)
@@ -36,9 +58,24 @@ class DataValidation:
     def initiate_data_validation(self):
         
         try:
-            data=load_csv(self.data_validation_config.data_filepath)
-            logging.info("Data extracted from feature store")
-            self.validate_columns(data)
+            train_data=load_csv(self.data_validation_config.train_filepath)
+            logging.info("Train Data extraction for validation is completed")
+
+            test_data=load_csv(self.data_validation_config.test_filepath)
+            logging.info("Test Data extraction for validation is completed")
+
+            train_status=self.validate_columns(train_data)
+            logging.info(f"Validation of train data columns completed with Status={train_status}")
+
+            test_status=self.validate_columns(test_data)
+            logging.info(f"Validation of test data columns completed with Status={test_status}")
+
+            drift_status=self.detect_data_drift(train_data,test_data)
+            logging.info("Data Drift Check completed")
+
+            validation_status=train_status and test_status and drift_status
+            save_json({"status":validation_status},self.data_validation_config.validation_dir)
+
         except Exception as e:
             HousePriceException(e,sys)
 

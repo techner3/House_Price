@@ -5,8 +5,8 @@ stages:
     deps:
     - path: house_price/components/data_ingestion.py
       hash: md5
-      md5: 9fe512ce2733a7aa512d53b30d50e8b1
-      size: 1604
+      md5: 056042ae34ea592ff8ed34ceaa550ff1
+      size: 2102
     - path: house_price/data_access/mongo_db.py
       hash: md5
       md5: b02fa75043b1bd0a753d6f94a1e3064e
@@ -16,29 +16,41 @@ stages:
       hash: md5
       md5: 345f53abb4205c73ad17e3a11ff1e631
       size: 445158
+    - path: artifacts/data_ingestion/test/test.csv
+      hash: md5
+      md5: f29edb378b6b6a1619dc26646e00a0ae
+      size: 89656
+    - path: artifacts/data_ingestion/train/train.csv
+      hash: md5
+      md5: e295e0f5d42fb1fe76818897c2a7d31d
+      size: 356354
   data_transformation:
     cmd: python house_price/components/data_transformation.py
     deps:
-    - path: artifacts/data_ingestion/feature_store/data.csv
+    - path: artifacts/data_ingestion/test/test.csv
       hash: md5
-      md5: 345f53abb4205c73ad17e3a11ff1e631
-      size: 445158
+      md5: f29edb378b6b6a1619dc26646e00a0ae
+      size: 89656
+    - path: artifacts/data_ingestion/train/train.csv
+      hash: md5
+      md5: e295e0f5d42fb1fe76818897c2a7d31d
+      size: 356354
     - path: artifacts/data_validation/status.json
       hash: md5
-      md5: d41d8cd98f00b204e9800998ecf8427e
-      size: 0
+      md5: a1cbd35d4488ac8cc6f959d4c633dc37
+      size: 16
     - path: house_price/components/data_transformation.py
       hash: md5
-      md5: ed953ced06c06534e548a53cb20170f2
-      size: 5815
+      md5: 055a97778699feead4c9822fb31ac2bd
+      size: 5735
     outs:
     - path: artifacts/data_transformation/test/test.npy
       hash: md5
-      md5: 65fcaf4399e0240ffa3cbfe7e06d636b
+      md5: ebd0075b1130a501f19967604b64351c
       size: 210368
     - path: artifacts/data_transformation/train/train.npy
       hash: md5
-      md5: e588849e49aa9b53111925afa3c50275
+      md5: 5548b2b881bec7527db7d4249ecc1bab
       size: 841088
   data_validation:
     cmd: python house_price/components/data_validation.py
@@ -47,12 +59,24 @@ stages:
       hash: md5
       md5: 345f53abb4205c73ad17e3a11ff1e631
       size: 445158
+    - path: artifacts/data_ingestion/test/test.csv
+      hash: md5
+      md5: f29edb378b6b6a1619dc26646e00a0ae
+      size: 89656
+    - path: artifacts/data_ingestion/train/train.csv
+      hash: md5
+      md5: e295e0f5d42fb1fe76818897c2a7d31d
+      size: 356354
     - path: house_price/components/data_validation.py
       hash: md5
-      md5: bde77de79388881a25a7dcfb1cbb260b
-      size: 2176
+      md5: 09ec8cbfbedcc0d2bbe1d3a6d6201025
+      size: 3685
     outs:
+    - path: artifacts/data_validation/drift.yaml
+      hash: md5
+      md5: bbaecfc56b4e078903d3ee821db4254c
+      size: 88649
     - path: artifacts/data_validation/status.json
       hash: md5
-      md5: d41d8cd98f00b204e9800998ecf8427e
-      size: 0
+      md5: a1cbd35d4488ac8cc6f959d4c633dc37
+      size: 16
