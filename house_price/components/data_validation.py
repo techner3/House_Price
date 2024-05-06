@@ -31,7 +31,7 @@ class DataValidation:
             return status
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
     def detect_data_drift(self,train_data,test_data):
 
@@ -53,7 +53,7 @@ class DataValidation:
             return drift_status
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
     def initiate_data_validation(self):
         
@@ -77,7 +77,7 @@ class DataValidation:
             save_json({"status":validation_status},self.data_validation_config.validation_dir)
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
 if __name__=="__main__":
     try:
@@ -88,4 +88,4 @@ if __name__=="__main__":
         logging.info(">>>>>>>>>> Stage 01 Data Validation completed <<<<<<<<<<")
 
     except Exception as e:
-        HousePriceException(e,sys)
+        raise HousePriceException(e,sys)

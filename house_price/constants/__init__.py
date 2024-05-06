@@ -13,7 +13,7 @@ TRAIN_CSVFILE="train.csv"
 TEST_CSVFILE="test.csv"
 
 #Data Validation
-STATUS_FILE="status.json"
+VALIDATION_STATUS_FILE="validation_status.json"
 VALIDATION_DIR="data_validation"
 DRIFT_FILE="drift.yaml"
 
@@ -30,3 +30,8 @@ TARGET_PREPROCESSOR="target_preprocessor.pkl"
 #Model Trainer
 MODEL_DIR="model_trainer"
 MODEL_FILE="model.pkl"
+EXP_JSON="id.json"
+
+#Model Evaluation
+EVALUATION_STATUS_FILE="evaluation_status.json"
+EVALUATION_DIR="model_evaluation"

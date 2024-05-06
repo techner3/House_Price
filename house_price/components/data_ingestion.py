@@ -56,4 +56,4 @@ if __name__=="__main__":
         logging.info(">>>>>>>>>> Stage 00 Data Ingestion completed <<<<<<<<<<")
 
     except Exception as e:
-            raise HousePriceException(e,sys)
+        raise HousePriceException(e,sys)

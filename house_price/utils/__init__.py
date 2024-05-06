@@ -5,6 +5,7 @@ import yaml
 import json
 import numpy as np
 import pandas as pd
+from logger import logging
 from exception import HousePriceException
 
 def load_csv(file_path):
@@ -69,7 +70,7 @@ def load_json(file_path):
             return json.load(file)
 
     except Exception as e:
-        HousePriceException(e,sys)
+        raise HousePriceException(e,sys)
 
 def save_json(data,file_path):
 
@@ -79,7 +80,7 @@ def save_json(data,file_path):
             json.dump(data,file)
 
     except Exception as e:
-        HousePriceException(e,sys)
+        raise HousePriceException(e,sys)
 
 def load_object(file_path):
 

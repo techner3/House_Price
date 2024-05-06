@@ -34,7 +34,8 @@ class DataTransformation:
         self.schema=read_yaml(self.data_transformation_config.config_yaml)
         self.numerical_features=[feature for feature in self.schema["numerical_features"] if feature not in self.schema["multi_collinear_columns"] and feature not in self.schema["skewed_columns"]]
 
-    def split_data(self,data,target):
+    @staticmethod
+    def split_data(data,target):
 
         X=data.drop(target,axis=1)
         Y=data[target]
@@ -76,10 +77,10 @@ class DataTransformation:
             test_data=load_csv(self.data_transformation_config.test_filepath)
             logging.info("Test Data extraction for transformation completed")
 
-            X_train,Y_train=self.split_data(train_data,self.schema["target"])
+            X_train,Y_train=DataTransformation.split_data(train_data,self.schema["target"])
             logging.info(f"Dependent and Independent variables for train data separated")
 
-            X_test,Y_test=self.split_data(test_data,self.schema["target"])
+            X_test,Y_test=DataTransformation.split_data(test_data,self.schema["target"])
             logging.info(f"Dependent and Independent variables for test data separated")
 
             feature_preprocessor_obj=self.get_feature_preprocessor_obj()

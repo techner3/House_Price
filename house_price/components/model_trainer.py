@@ -3,27 +3,28 @@ import sys
 import json
 import mlflow
 from logger import logging
+from ml.ml_flow import Mlflow
 from dotenv import load_dotenv
 from xgboost import XGBRegressor
 from sklearn.pipeline import Pipeline
-from mlflow.client import MlflowClient
 from sklearn.linear_model import Ridge
 from exception import HousePriceException
 from sklearn.model_selection import GridSearchCV
-from utils import load_numpy_array_data,read_yaml,load_object,save_object
 from entity.config_entity import RegressionMetrics
 from sklearn.ensemble import RandomForestRegressor
 from entity.config_entity import ModelTrainerConfig
+from utils import load_numpy_array_data,read_yaml,load_object,save_object,save_json
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
+
 
 load_dotenv()
 
 class ModelTrainer:
 
-    def __init__(self,model_trainer_config:ModelTrainerConfig):
+    def __init__(self,model_trainer_config:ModelTrainerConfig,mlflow:Mlflow):
         self.model_trainer_config=model_trainer_config
         self.mlflow_tracking_uri=os.getenv("MLFLOW_TRACKING_URI")
-        self.mlflow_client=MlflowClient(tracking_uri=self.mlflow_tracking_uri)
+        self.mlflow_client=mlflow.mlflow_client
         self.model_params=read_yaml(self.model_trainer_config.model_params)
         self.experiment_id=self.mlflow_client.create_experiment(name=self.model_trainer_config.experiment_name)
         self.models= [('XGBoost', XGBRegressor(), self.model_params["models"]["xgboost"]),
@@ -39,17 +40,17 @@ class ModelTrainer:
             return RegressionMetrics(mse,mae,r2)
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
     def best_model_from_mlflow(self):
 
         try:
             best_model_info=json.loads(self.mlflow_client.search_runs(experiment_ids=self.experiment_id,order_by=[f"metrics.mae DESC"])[0].data.tags["mlflow.log-model.history"])
             best_model = mlflow.sklearn.load_model(f"runs:/{best_model_info[0]['run_id']}/{best_model_info[0]['artifact_path']}")
-            return best_model
+            return best_model, best_model_info
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
     def finding_best_model(self,X_train, Y_train, X_test, Y_test):
 
@@ -71,7 +72,7 @@ class ModelTrainer:
             return self.best_model_from_mlflow()
 
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
     def initiate_model_training(self):
 
@@ -85,7 +86,7 @@ class ModelTrainer:
 
             X_train, Y_train, X_test, Y_test = (train_data[:, :-1],train_data[:, -1],test_data[:, :-1],test_data[:, -1])
 
-            best_model=self.finding_best_model(X_train, Y_train, X_test, Y_test)
+            best_model,best_model_info=self.finding_best_model(X_train, Y_train, X_test, Y_test)
             logging.info("Model experimentation completed and best model found")
 
             preprocesor=load_object(self.model_trainer_config.feature_preprocessor_path)
@@ -95,17 +96,21 @@ class ModelTrainer:
             save_object(model,self.model_trainer_config.model_dir)
             logging.info(f"Model with preprocessor saved at {self.model_trainer_config.model_dir}")
 
+            save_json({"exp_id":self.experiment_id},self.model_trainer_config.exp_id_file)
+            logging.info(f"Saved Exp ID file at {self.model_trainer_config.exp_id_file}")
+
         except Exception as e:
-            HousePriceException(e,sys)
+            raise HousePriceException(e,sys)
 
 if __name__=="__main__":
 
     try:
         logging.info(">>>>>>>>>> Stage 03 Model Training initiated <<<<<<<<<<")
         model_trainer_config=ModelTrainerConfig()
-        model_trainer=ModelTrainer(model_trainer_config)
+        ml_flow=Mlflow()
+        model_trainer=ModelTrainer(model_trainer_config,ml_flow)
         model_trainer.initiate_model_training()
         logging.info(">>>>>>>>>> Stage 03 Model Training initiated <<<<<<<<<<")
 
     except Exception as e:
-        HousePriceException(e,sys)
+        raise HousePriceException(e,sys)

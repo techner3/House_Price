@@ -10,4 +10,5 @@ from-root
 matplotlib
 python-dotenv
 xgboost
+scikit-learn
 -e .
