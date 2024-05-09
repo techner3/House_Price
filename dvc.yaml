@@ -31,7 +31,6 @@ stages:
       - artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
       - artifacts/data_transformation/preprocessor/target_preprocessor.pkl
     
-    
   model_trainer:
     cmd: python house_price/components/model_trainer.py
     deps:

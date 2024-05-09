@@ -1,9 +1,9 @@
 import sys
+from utils import load_json
 from logger import logging
 from ml.ml_flow import Mlflow
 from exception import HousePriceException
 from entity.config_entity import ModelPusherConfig
-from utils import load_json
 
 class ModelPusher:
 

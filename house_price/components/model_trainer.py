@@ -45,9 +45,9 @@ class ModelTrainer:
     def best_model_from_mlflow(self):
 
         try:
-            best_model_info=json.loads(self.mlflow_client.search_runs(experiment_ids=self.experiment_id,order_by=[f"metrics.mae DESC"])[0].data.tags["mlflow.log-model.history"])
-            best_model = mlflow.sklearn.load_model(f"runs:/{best_model_info[0]['run_id']}/{best_model_info[0]['artifact_path']}")
-            return best_model, best_model_info
+            runs=self.mlflow_client.search_runs(experiment_ids=self.experiment_id,order_by=[f"metrics.mae DESC"])
+            best_model = mlflow.sklearn.load_model(self.mlflow_client.search_model_versions(filter_string=f"run_id='{runs[0].info.run_id}'")[0].source)
+            return best_model
 
         except Exception as e:
             raise HousePriceException(e,sys)
@@ -65,9 +65,10 @@ class ModelTrainer:
                     best_estimator=random.best_estimator_
                     Y_pred=best_estimator.predict(X_test)
                     metrics=self.calculate_metrics(Y_test,Y_pred)
+                    estimator_with_preprocessor=Pipeline(steps=[('preprocessor',self.preprocesor),('model',best_estimator)])
 
                     mlflow.log_metrics(metrics.__dict__)
-                    mlflow.sklearn.log_model(best_estimator,name,registered_model_name=name)
+                    mlflow.sklearn.log_model(artifact_path=name,sk_model=estimator_with_preprocessor,registered_model_name=name,extra_pip_requirements=["numpy"])
 
             return self.best_model_from_mlflow()
 
@@ -84,16 +85,15 @@ class ModelTrainer:
             test_data=load_numpy_array_data(self.model_trainer_config.test_file_path)
             logging.info("Test data locked and loaded for training")
 
+            self.preprocesor=load_object(self.model_trainer_config.feature_preprocessor_path)
+            logging.info("Loaded the Preprocessor Object")
+
             X_train, Y_train, X_test, Y_test = (train_data[:, :-1],train_data[:, -1],test_data[:, :-1],test_data[:, -1])
 
-            best_model,best_model_info=self.finding_best_model(X_train, Y_train, X_test, Y_test)
+            best_model=self.finding_best_model(X_train, Y_train, X_test, Y_test)
             logging.info("Model experimentation completed and best model found")
 
-            preprocesor=load_object(self.model_trainer_config.feature_preprocessor_path)
-
-            model=Pipeline(steps=[('preprocessor',preprocesor),('model',best_model)])
-
-            save_object(model,self.model_trainer_config.model_dir)
+            save_object(best_model,self.model_trainer_config.model_dir)
             logging.info(f"Model with preprocessor saved at {self.model_trainer_config.model_dir}")
 
             save_json({"exp_id":self.experiment_id},self.model_trainer_config.exp_id_file)
