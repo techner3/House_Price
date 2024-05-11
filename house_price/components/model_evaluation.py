@@ -46,6 +46,11 @@ class ModelEvaluation:
                 X,Y=DataTransformation.split_data(data_df,self.schema["target"])
                 logging.info("Independent and Dependent feature separated")
 
+                target_preprocesor=load_object(self.model_evaluation_config.feature_preprocessor_path)
+                logging.info(f"Feature preprocessor loaded successfully")
+
+                X_new=target_preprocesor.transform(X)
+
                 new_model=load_object(self.model_evaluation_config.model_dir)
                 logging.info(f"Newly trained model loaded successfully")
 
@@ -55,8 +60,8 @@ class ModelEvaluation:
                 y_transformed=target_preprocessor.transform(Y)
                 logging.info(f"Dependent features transformation completed")
 
-                y_pred_production=production_model.predict(X)
-                y_pred_newmodel=new_model.predict(X)
+                y_pred_production=production_model.predict(X_new)
+                y_pred_newmodel=new_model.predict(X_new)
 
                 mae_production=mean_absolute_error(y_transformed,y_pred_production)
                 mae_newmodel=mean_absolute_error(y_transformed,y_pred_newmodel)

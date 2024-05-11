@@ -4,9 +4,7 @@ import json
 import mlflow
 from logger import logging
 from ml.ml_flow import Mlflow
-from dotenv import load_dotenv
 from xgboost import XGBRegressor
-from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Ridge
 from exception import HousePriceException
 from sklearn.model_selection import GridSearchCV
@@ -16,14 +14,10 @@ from entity.config_entity import ModelTrainerConfig
 from utils import load_numpy_array_data,read_yaml,load_object,save_object,save_json
 from sklearn.metrics import r2_score,mean_absolute_error,mean_squared_error
 
-
-load_dotenv()
-
 class ModelTrainer:
 
     def __init__(self,model_trainer_config:ModelTrainerConfig,mlflow:Mlflow):
         self.model_trainer_config=model_trainer_config
-        self.mlflow_tracking_uri=os.getenv("MLFLOW_TRACKING_URI")
         self.mlflow_client=mlflow.mlflow_client
         self.model_params=read_yaml(self.model_trainer_config.model_params)
         self.experiment_id=self.mlflow_client.create_experiment(name=self.model_trainer_config.experiment_name)
@@ -65,10 +59,10 @@ class ModelTrainer:
                     best_estimator=random.best_estimator_
                     Y_pred=best_estimator.predict(X_test)
                     metrics=self.calculate_metrics(Y_test,Y_pred)
-                    estimator_with_preprocessor=Pipeline(steps=[('preprocessor',self.preprocesor),('model',best_estimator)])
 
                     mlflow.log_metrics(metrics.__dict__)
-                    mlflow.sklearn.log_model(artifact_path=name,sk_model=estimator_with_preprocessor,registered_model_name=name,extra_pip_requirements=["numpy"])
+                    
+                    mlflow.sklearn.log_model(artifact_path=name,sk_model=best_estimator,registered_model_name=name)
 
             return self.best_model_from_mlflow()
 
@@ -84,9 +78,6 @@ class ModelTrainer:
 
             test_data=load_numpy_array_data(self.model_trainer_config.test_file_path)
             logging.info("Test data locked and loaded for training")
-
-            self.preprocesor=load_object(self.model_trainer_config.feature_preprocessor_path)
-            logging.info("Loaded the Preprocessor Object")
 
             X_train, Y_train, X_test, Y_test = (train_data[:, :-1],train_data[:, -1],test_data[:, :-1],test_data[:, -1])
 

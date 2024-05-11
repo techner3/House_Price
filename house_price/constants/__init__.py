@@ -35,3 +35,6 @@ EXP_JSON="id.json"
 #Model Evaluation
 EVALUATION_STATUS_FILE="evaluation_status.json"
 EVALUATION_DIR="model_evaluation"
+
+#Model Pusher
+MODEL_SAVING_DIR="model/model.pkl"

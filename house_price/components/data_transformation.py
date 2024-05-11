@@ -21,6 +21,7 @@ class FeatureGenerator(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
+
         new_feature=X[:,self.yr_sold_ix]-X[:,self.yr_built_ix]
         new_df=np.c_[X, new_feature]
         return new_df
@@ -48,7 +49,7 @@ class DataTransformation:
             skewed_transformer=Pipeline(steps=[('imputer', SimpleImputer(strategy='median')),('skew_correction', FunctionTransformer(np.log1p)),('skew_scaler', StandardScaler())])
             numeric_transformer=Pipeline(steps=[('imputer', SimpleImputer(strategy='median')),('scaler', StandardScaler())])
             preprocessor = ColumnTransformer(transformers=[
-            ('year_transformer', year_transformer,self.schema["numerical_features"]),
+            ('year_transformer', year_transformer,self.schema["year_features"]),
             ('to_drop', "drop", self.schema["multi_collinear_columns"]),
             ('cat_transformer', categorical_transformer, self.schema["categorical_features"]),
             ('skew_transformer', skewed_transformer, self.schema["skewed_columns"]),

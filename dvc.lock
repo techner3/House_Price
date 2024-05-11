@@ -18,55 +18,59 @@ stages:
       size: 445158
     - path: artifacts/data_ingestion/test/test.csv
       hash: md5
-      md5: 0237589d1729dfb5cef6a36b647c23a7
-      size: 89249
+      md5: eea7e3d744ce7b4aa59c4f3425d349b0
+      size: 89852
     - path: artifacts/data_ingestion/train/train.csv
       hash: md5
-      md5: 31da8c1509b84048ecff08965a2f8ef3
-      size: 356761
+      md5: 37410420f5d9c8c359884bc373b27039
+      size: 356158
   data_transformation:
     cmd: python house_price/components/data_transformation.py
     deps:
     - path: artifacts/data_ingestion/test/test.csv
       hash: md5
-      md5: 0237589d1729dfb5cef6a36b647c23a7
-      size: 89249
+      md5: eea7e3d744ce7b4aa59c4f3425d349b0
+      size: 89852
     - path: artifacts/data_ingestion/train/train.csv
       hash: md5
-      md5: 31da8c1509b84048ecff08965a2f8ef3
-      size: 356761
+      md5: 37410420f5d9c8c359884bc373b27039
+      size: 356158
+    - path: config/config.yaml
+      hash: md5
+      md5: 7584967fc2ef40c0b9e8fbb596f2a0a5
+      size: 1665
     - path: house_price/components/data_transformation.py
       hash: md5
-      md5: 3f4d8372b96527ac2d3cd1482958316b
-      size: 6229
+      md5: f851984ef38b07315f906afbcfd1d4d4
+      size: 6225
     outs:
     - path: artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
       hash: md5
-      md5: bcb60f4872d83d835f56391a9f1c1124
-      size: 299616
+      md5: f52befb1ad6bb4b80e4ceb411c21154a
+      size: 67350
     - path: artifacts/data_transformation/preprocessor/target_preprocessor.pkl
       hash: md5
       md5: 20e031d3181f8d947766fb88613479f5
       size: 494
     - path: artifacts/data_transformation/test/test.npy
       hash: md5
-      md5: 6e91af6c040ea879357fc6ab5b226183
-      size: 210368
+      md5: 46b58cc09d44d445ada56ba33b174f9f
+      size: 158976
     - path: artifacts/data_transformation/train/train.npy
       hash: md5
-      md5: 0d36b9cf70264445847c9e357dfefae4
-      size: 841088
+      md5: a31cf2d7c9050395f55e9ef11f4e540b
+      size: 635520
   data_validation:
     cmd: python house_price/components/data_validation.py
     deps:
     - path: artifacts/data_ingestion/test/test.csv
       hash: md5
-      md5: 0237589d1729dfb5cef6a36b647c23a7
-      size: 89249
+      md5: eea7e3d744ce7b4aa59c4f3425d349b0
+      size: 89852
     - path: artifacts/data_ingestion/train/train.csv
       hash: md5
-      md5: 31da8c1509b84048ecff08965a2f8ef3
-      size: 356761
+      md5: 37410420f5d9c8c359884bc373b27039
+      size: 356158
     - path: house_price/components/data_validation.py
       hash: md5
       md5: 8b400eafb6123476c94a58c90b0defec
@@ -74,59 +78,63 @@ stages:
     outs:
     - path: artifacts/data_validation/drift.yaml
       hash: md5
-      md5: 8fdc83426f42e29a5e408a4caa3c3ae3
-      size: 88570
+      md5: 434d9ba6f301f26f5eb21e905ee2800e
+      size: 88702
     - path: artifacts/data_validation/validation_status.json
       hash: md5
-      md5: 145ca6ca911ea23d21143ac4acd84d36
-      size: 17
+      md5: a1cbd35d4488ac8cc6f959d4c633dc37
+      size: 16
   model_trainer:
     cmd: python house_price/components/model_trainer.py
     deps:
     - path: artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
       hash: md5
-      md5: bcb60f4872d83d835f56391a9f1c1124
-      size: 299616
+      md5: f52befb1ad6bb4b80e4ceb411c21154a
+      size: 67350
     - path: artifacts/data_transformation/preprocessor/target_preprocessor.pkl
       hash: md5
       md5: 20e031d3181f8d947766fb88613479f5
       size: 494
     - path: artifacts/data_transformation/test/test.npy
       hash: md5
-      md5: 6e91af6c040ea879357fc6ab5b226183
-      size: 210368
+      md5: 46b58cc09d44d445ada56ba33b174f9f
+      size: 158976
     - path: artifacts/data_transformation/train/train.npy
       hash: md5
-      md5: 0d36b9cf70264445847c9e357dfefae4
-      size: 841088
+      md5: a31cf2d7c9050395f55e9ef11f4e540b
+      size: 635520
+    - path: config/model.yaml
+      hash: md5
+      md5: c5d1ff1246efd079b852e783a4ef244f
+      size: 471
     - path: house_price/components/model_trainer.py
       hash: md5
-      md5: 47b57a3abda399fca275aa841984a721
-      size: 4925
+      md5: f23e3ced8ef30899628b4b1c8e2047b8
+      size: 4470
     outs:
     - path: artifacts/model_trainer/id.json
       hash: md5
-      md5: 5ca636ccb051181b619b6c869bbf3fb5
+      md5: 169e844ad4428a56006b3b95294fa72c
       size: 16
     - path: artifacts/model_trainer/model.pkl
       hash: md5
-      md5: cdf3100ee2ef0fe032280543cfa3711b
-      size: 300772
+      md5: 7938518e4a63e4731076b0f5391e170e
+      size: 1018
   model_evaluation:
     cmd: python house_price/components/model_evaluation.py
     deps:
     - path: artifacts/data_ingestion/test/test.csv
       hash: md5
-      md5: 0237589d1729dfb5cef6a36b647c23a7
-      size: 89249
+      md5: eea7e3d744ce7b4aa59c4f3425d349b0
+      size: 89852
     - path: artifacts/data_transformation/preprocessor/target_preprocessor.pkl
       hash: md5
       md5: 20e031d3181f8d947766fb88613479f5
       size: 494
     - path: house_price/components/model_evaluation.py
       hash: md5
-      md5: e510a5f3273791b12839ed6db98b89ae
-      size: 3331
+      md5: 4fd48ef5de24ad5b3310f6391f2710d4
+      size: 3572
     outs:
     - path: artifacts/model_evaluation/evaluation_status.json
       hash: md5
@@ -137,9 +145,14 @@ stages:
     deps:
     - path: artifacts/model_trainer/id.json
       hash: md5
-      md5: 5ca636ccb051181b619b6c869bbf3fb5
+      md5: 169e844ad4428a56006b3b95294fa72c
       size: 16
     - path: house_price/components/model_pusher.py
       hash: md5
-      md5: 9cee995187349a828ca1fb49abbe37c7
-      size: 1953
+      md5: 67129aebd2deab8f6a5db3b75941d5b0
+      size: 2554
+    outs:
+    - path: model/model.pkl
+      hash: md5
+      md5: 22814072b12ef57ce19d2103a128d90e
+      size: 69511

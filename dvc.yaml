@@ -25,6 +25,7 @@ stages:
       - house_price/components/data_transformation.py
       - artifacts/data_ingestion/train/train.csv
       - artifacts/data_ingestion/test/test.csv
+      - config/config.yaml
     outs:
       - artifacts/data_transformation/train/train.npy
       - artifacts/data_transformation/test/test.npy
@@ -39,6 +40,7 @@ stages:
       - artifacts/data_transformation/test/test.npy
       - artifacts/data_transformation/preprocessor/feature_preprocessor.pkl
       - artifacts/data_transformation/preprocessor/target_preprocessor.pkl
+      - config/model.yaml
     outs:
       - artifacts/model_trainer/model.pkl
       - artifacts/model_trainer/id.json
@@ -57,3 +59,5 @@ stages:
     deps:
       - house_price/components/model_pusher.py
       - artifacts/model_trainer/id.json
+    outs:
+      - model/model.pkl
